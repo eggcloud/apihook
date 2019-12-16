@@ -30,7 +30,7 @@ http.createServer((req, res) => {
         let body = '';
         req.on('data', (data) => { body += data; });
         return req.on('end', () => {
-                console.log('--------------------------------------------------------------------');
+                console.log('----------------------------------------------------------------------');
                 console.log(req.method,req.url);
                 console.log(JSON.stringify(JSON.parse(body), null, 4));
                 res.writeHead(200);
