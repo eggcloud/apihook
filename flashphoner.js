@@ -37,6 +37,8 @@ http.createServer((req, res) => {
                 res.end(body);
                 });
     }
+    console.log('----------------------------------------------------------------------');
+    console.log(req.method,req.url);
     res.writeHead(404, 'NOT FOUND');
     return res.end('NOT FOUND');
 
