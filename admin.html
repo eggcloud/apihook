@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Web Call Server: Admin/Monitor</title>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js" ></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.1.0/bootbox.min.js"></script>
+<script type="text/javascript" src="admin.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" type="text/css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css" type="text/css"/>
+<!--
+<style>
+  table, th, td {
+    border: 1px solid #bcbcbc;
+  }
+</style>
+-->
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="page-header">
+				<h1>Web Call Server: Admin/Monitor</h1>
+			</div>
+
+			<div>
+				<ul id="admintabs" class="nav nav-tabs" role="tablist">
+					<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+					<li role="presentation" class="disabled"><a href="#servers" aria-controls="servers" role="tab" data-toggle="tab">Servers</a></li>
+					<li role="presentation" class="disabled"><a href="#serverinfo" aria-controls="serverinfo" role="tab" data-toggle="tab">Server Info</a></li>
+					<li role="presentation" class="disabled"><a href="#channelsinfo" aria-controls="channelsinfo" role="tab" data-toggle="tab">Channels</a></li>
+					<li role="presentation" class="disabled"><a href="#messagesinfo" aria-controls="messagesinfo" role="tab" data-toggle="tab">Messages</a></li>
+					<li role="presentation" class="disabled"><a href="#archiveinfo" aria-controls="archiveinfo" role="tab" data-toggle="tab">Archive</a></li>
+				</ul>
+
+				<div class="tab-content" style="padding: 20px;">
+					<div role="tabpanel" class="tab-pane fade in active" id="home">
+						<p>This is just an example of how you can build an UI on top of the
+						existing <code>Admin/Monitor</code> interface. This page will only
+						work as it is if you enabled the API (which is disabled by default)
+						and you're using the default values. Edit the backend settings in
+						the <code>admin.js</code> JavaScript code to adapt it to your
+						configuration if you changed anything.</p>
+						<p>Flashphoner documentation <a href="https://docs.flashphoner.com/display/WCS52EN/Web+Call+Server+5.2+-+EN" target="_blank">online manual</a>.</p>
+						<p>REST hook server <a href="./log.txt" target="_blank">log.txt</a>.</p>
+					</div>
+                    <div role="tabpanel" class="tab-pane fade" id="servers">
+                        <div id="server" class="col-md-2">
+                            <h4>Server (<span id="server-num">0</span>)</h4>
+                            <div id="server-list" class="list-group">
+                            </div>
+                        </div>
+                        <div id="serverapi" class="col-md-2">
+                            <h4>Api (<span id="serverapi-num"></span>)</h4>
+                            <div id="serverapi-list" class="list-group">
+                            </div>
+                        </div>
+                        <div id="servermsg" class="col-md-8">
+                            <h4>Message <i id="update-servermsg" class="fa fa-refresh" title="Refresh message" style="cursor: pointer;"></i></h4>
+                            <div id="servermsg-options" class="hide">
+                                <label class="checkbox-inline" title="Autorefresh this info every 5s">
+                                    <input id="servermsg-autorefresh" type="checkbox" value="" title="Autorefresh this info every 5s">Autorefresh
+                                </label>
+                            </div>
+                            <div id="servermsg-info">
+                            </div>
+                        </div>
+                    </div>
+					<div role="tabpanel" class="tab-pane fade" id="channelsinfo">
+						<div id="users" class="col-md-2">
+							<h4>Users (<span id="users-num">0</span>) <i id="update-users" class="fa fa-refresh" title="Refresh list of users" style="cursor: pointer;"></i></h4>
+							<div id="users-list" class="list-group">
+							</div>
+						</div>
+						<div id="channels" class="col-md-2">
+							<h4>Channels (<span id="channels-num"></span>) <i id="update-channels" class="fa fa-refresh" title="Refresh list of channels" style="cursor: pointer;"></i></h4>
+							<div id="channels-list" class="list-group">
+							</div>
+						</div>
+						<div id="cinfo" class="col-md-8">
+							<h4>Channel Info <i id="update-channel" class="fa fa-refresh" title="Refresh channel info" style="cursor: pointer;"></i></h4>
+							<div id="cinfo-options" class="hide">
+								<label class="checkbox-inline" title="Autorefresh this info every 5s">
+									<input id="cinfo-autorefresh" type="checkbox" value="" title="Autorefresh this info every 5s">Autorefresh
+								</label>
+								<label class="checkbox-inline" title="Show information as HTML">
+									<input id="cinfo-prettify" type="checkbox" value="" title="Show information as HTML">Prettify
+								</label>
+							</div>
+							<div id="channel-info">
+							</div>
+						</div>
+					</div>
+					<div role="tabpanel" class="tab-pane fade" id="messagesinfo">
+						<div id="msgchannels" class="col-md-2">
+							<h4>Channels (<span id="msgchannels-num">0</span>) <i id="update-msgchannels" class="fa fa-refresh" title="Refresh list of channels" style="cursor: pointer;"></i></h4>
+							<div id="msgchannels-list" class="list-group">
+							</div>
+						</div>
+						<div id="messages" class="col-md-2">
+							<h4>Messages (<span id="messages-num"></span>) <i id="update-messages" class="fa fa-refresh" title="Refresh list of messages" style="cursor: pointer;"></i></h4>
+							<div id="messages-list" class="list-group">
+							</div>
+						</div>
+						<div id="minfo" class="col-md-8">
+							<h4>Message Info <i id="update-message" class="fa fa-refresh" title="Refresh message info" style="cursor: pointer;"></i></h4>
+							<div id="minfo-options" class="hide">
+								<label class="checkbox-inline" title="Autorefresh this info every 5s">
+									<input id="minfo-autorefresh" type="checkbox" value="" title="Autorefresh this info every 5s">Autorefresh
+								</label>
+								<label class="checkbox-inline" title="Show information as HTML">
+									<input id="minfo-prettify" type="checkbox" value="" title="Show information as HTML">Prettify
+								</label>
+							</div>
+							<div id="message-info">
+							</div>
+						</div>
+					</div>
+					<div role="tabpanel" class="tab-pane fade" id="serverinfo">
+						<h4>Server Info</h4>
+						<div>
+							<table class="table table-striped" id="server-details">
+							</table>
+						</div>
+						<h4>System</h4>
+						<div>
+							<table class="table table-striped" id="server-system">
+							</table>
+						</div>
+                        <h4>Usage</h4>
+                        <div>
+                            <table class="table table-striped" id="server-usage">
+                            </table>
+                        </div>
+					</div>
+					<div role="tabpanel" class="tab-pane fade" id="archiveinfo">
+                        <h4>Backup</h4>
+                        <div>
+                            <table class="table table-striped" id="server-backup">
+                            </table>
+                        </div>
+                        <h4>Storage</h4>
+                        <div>
+                            <table class="table table-striped" id="server-storage">
+                            </table>
+                        </div>
+                        <h4>Emoji</h4>
+                        <div>
+                            <table class="table table-striped" id="server-emoji">
+                            </table>
+                        </div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<hr>
+	<div class="footer">
+	</div>
+</div>
+</body>
+</html>
