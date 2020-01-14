@@ -240,6 +240,7 @@ function updateServerMsg(refresh) {
 
 	$.ajax({
 		type: 'GET',
+        crossOrigin : true,
 		url: "https://" + currentServer + ".remoteseminar.com:8444/?action=" + currentServerApi,
 		//url: "http://" + currentServer + ".remoteseminar.com:8081/?action=" + currentServerApi,
 		cache: false,
