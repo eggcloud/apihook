@@ -250,7 +250,8 @@ function updateServerMsg(refresh) {
 			console.log(json);
 			//channelInfo = json["info"];
             // Just use <pre> and show the channel info as it is
-            $('#servermsg-info').html('<pre>' + JSON.stringify(json, null, 4) + '</pre>');
+            $('#servermsg-info').html('<pre>' + json + '</pre>');
+            //$('#servermsg-info').html('<pre>' + JSON.stringify(json, null, 4) + '</pre>');
 			setTimeout(function() {
 				$('#update-server').click(updateServer);
 				$('#update-serverapi').click(updateServerApi);
