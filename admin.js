@@ -25,8 +25,14 @@ var serverApiArray = [
     "stat",
     "info",
 ];
+var cdnApiArray = [
+    "show_nodes",
+    "show_state",
+    "show_routes",
+];
 var currentServer = null;
 var currentServerApi = null;
+var currentCDNApi = null;
 
 $(document).ready(function() {
 	if(typeof console == "undefined" || typeof console.log == "undefined")
@@ -37,81 +43,6 @@ $(document).ready(function() {
 var prompting = false;
 var alerted = false;
 function promptAccessDetails() {
-}
-
-function dumpBackup() {
-	$.ajax({
-		type: 'GET',
-		url: server + "/admin/dumps",
-		cache: false,
-		contentType: "application/json",
-		success: function(json) {
-			console.log("Got dump info:");
-			console.log(json);
-            $('#dumpinfo').html(json['dumpLog']);
-		},
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            console.log(textStatus + ": " + errorThrown);   // FIXME
-            if(!prompting && !alerted) {
-                alerted = true;
-                bootbox.alert("Couldn't contact the backend: is Server down, or is the Admin/Monitor interface disabled?", function() {
-                    promptAccessDetails();
-                    alerted = false;
-                });
-            }
-        },
-        dataType: "json"
-    });
-}
-
-function loadBackup() {
-	$.ajax({
-		type: 'GET',
-		url: server + "/admin/loads",
-		cache: false,
-		contentType: "application/json",
-		success: function(json) {
-			console.log("Got load info:");
-			console.log(json);
-            $('#loadinfo').html(json['loadLog']);
-		},
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            console.log(textStatus + ": " + errorThrown);   // FIXME
-            if(!prompting && !alerted) {
-                alerted = true;
-                bootbox.alert("Couldn't contact the backend: is Server down, or is the Admin/Monitor interface disabled?", function() {
-                    promptAccessDetails();
-                    alerted = false;
-                });
-            }
-        },
-        dataType: "json"
-    });
-}
-
-function initBackup() {
-	$.ajax({
-		type: 'GET',
-		url: server + "/admin/init",
-		cache: false,
-		contentType: "application/json",
-		success: function(json) {
-			console.log("Got init info:");
-			console.log(json);
-            $('#initinfo').html(json['status']);
-		},
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            console.log(textStatus + ": " + errorThrown);   // FIXME
-            if(!prompting && !alerted) {
-                alerted = true;
-                bootbox.alert("Couldn't contact the backend: is Server down, or is the Admin/Monitor interface disabled?", function() {
-                    promptAccessDetails();
-                    alerted = false;
-                });
-            }
-        },
-        dataType: "json"
-    });
 }
 
 // Init
@@ -130,6 +61,18 @@ function initialize() {
     $("#servermsg-autorefresh").change(function() {
         if(this.checked) {
             updateServerMsg(true);
+        }
+    });
+
+    $('#cdnapi').hide();
+    $('#cdnmsg').hide();
+    $('#update-cdnserver').click(updateCDNServer);
+    $('#update-cdnapi').click(updateCDNApi);
+    $('#update-cdnmsg').click(updateCDNMsg);
+    updateCDNServer();
+    $("#cdnmsg-autorefresh").change(function() {
+        if(this.checked) {
+            updateCDNMsg(true);
         }
     });
 }
@@ -305,6 +248,244 @@ function rawServerMsg(data) {
         $('#servermsg-info').html('<pre>' + data + '</pre>');
         //$('#servermsg-info').html('<pre>' + JSON.stringify(json, null, 4) + '</pre>');
     }
+}
+
+function updateCDNServer() {
+	//$('#update-cdnserver').unbind('click').addClass('fa-spin');
+	$('#update-cdnapi').unbind('click');
+	$('#update-cdnmsg').unbind('click');
+
+    console.log("Got servers:");
+    console.log(serverArray);
+    $('#cdnserver-list').empty();
+    $('#cdnserver-num').text(serverArray.length);
+    for(var i=0; i<serverArray.length; i++) {
+        var n = serverArray[i];
+        $('#cdnserver-list').append(
+            '<a id="cdnserver-'+n+'" href="#" class="list-group-item">'+n+'</a>'
+        );
+        $('#cdnserver-'+n).click(function() {
+            var sh = $(this).text();
+            //var sh = $(this).attr('id').substring(5);
+            if(currentServer === sh)
+                return;	// The self-refresh takes care of that
+            console.log("Getting server " + sh);
+            $('#cdnserver-list a').removeClass('active');
+            $('#cdnserver-'+sh).addClass('active');
+            currentCDNApi = null;
+            currentServer = sh;
+            $('#cdnapi-list').empty();
+            $('#cdnapi').show();
+            $('#cdnmsg-info').empty();
+            $('#cdnmsg-options').hide();
+            $('#cdnmsg').hide();
+            updateCDNApi();
+        });
+    }
+    if(currentServer !== null && currentServer !== undefined) {
+        if($('#cdnserver-'+currentServer).length) {
+            $('#cdnserver-'+currentServer).addClass('active');
+        } else {
+            // The server that was selected has disappeared
+            currentCDNApi = null;
+            currentServer = null;
+            $('#cdnapi-list').empty();
+            $('#cdnapi').hide();
+            $('#cdnmsg-info').empty();
+            $('#cdnmsg-options').hide();
+            $('#cdnmsg').hide();
+        }
+    }
+}
+
+function updateCDNApi() {
+	if(currentServer === null || currentServer === undefined)
+		return;
+
+	$('#update-cdnserver').unbind('click');
+	//$('#update-cdnapi').unbind('click').addClass('fa-spin');
+	$('#update-cdnmsg').unbind('click');
+
+    console.log("Got cdn api:");
+    console.log(cdnApiArray);
+    $('#cdnapi-list').empty();
+    $('#cdnapi-num').text(cdnApiArray.length);
+    for(var i=0; i<cdnApiArray.length; i++) {
+        var h = cdnApiArray[i];
+        $('#cdnapi-list').append(
+            '<a id="cdnapi-'+h+'" href="#" class="list-group-item">'+h+'</a>'
+        );
+        $('#cdnapi-'+h).click(function() {
+            var hi = $(this).text();
+            if(hi === currentCDNApi)
+                return;	// The self-refresh takes care of that
+            console.log("Getting cdn api " + hi);
+            currentCDNApi = hi;
+            $('#cdnapi-list a').removeClass('active');
+            $('#cdnapi-'+hi).addClass('active');
+            $('#cdnmsg-info').empty();
+            $('#cdnmsg-options').hide();
+            $('#cdnmsg').show();
+            updateCDNMsg();
+        });
+    }
+    if(currentCDNApi !== null && currentCDNApi !== undefined) {
+        if($('#cdnapi-'+currentCDNApi).length) {
+            $('#cdnapi-'+currentCDNApi).addClass('active');
+        } else {
+            // The server api that was selected has disappeared
+            currentServer = null;
+            $('#cdnmsg-info').empty();
+            $('#cdnmsg-options').hide();
+            $('#cdnmsg').hide();
+        }
+    }
+}
+
+function updateCDNMsg(refresh) {
+	if(currentCDNApi === null || currentCDNApi === undefined)
+		return;
+	//if(refresh !== true) {
+		//if(channel === currentChannel && $('#cinfo-autorefresh')[0].checked)
+			//return;	// The self-refresh takes care of that
+		//currentChannel = channel;
+	//}
+	$('#update-cdnserver').unbind('click');
+	$('#update-cdnapi').unbind('click');
+	$('#update-cdnmsg').unbind('click').addClass('fa-spin');
+
+	$.ajax({
+		type: 'GET',
+		url: "https://" + currentServer + ".remoteseminar.com:8444/rest-api/cdn/" + currentCDNApi,
+		//url: "http://" + currentServer + ".remoteseminar.com:8081/rest-api/cdn/" + currentServerApi,
+		cache: false,
+		contentType: "application/json",
+		success: function(text) {
+			console.log("Got cdn message:");
+			console.log(text);
+            rawCDNMsg(text);
+			setTimeout(function() {
+				$('#update-cdnserver').click(updateCDNServer);
+				$('#update-cdnapi').click(updateCDNApi);
+				$('#update-cdnmsg').removeClass('fa-spin').click(updateCDNMsg);
+			}, 1000);
+			// Show checkboxes
+			$('#cdnmsg-options').removeClass('hide').show();
+			// If the related box is checked, autorefresh this channel info every tot seconds
+			if($('#cdnmsg-autorefresh')[0].checked) {
+				setTimeout(function() {
+					//if(updateChannel !== currentChannel) {
+						// The channel changed in the meanwhile, don't autorefresh
+						//return;
+					//}
+					if(!$('#cdnmsg-autorefresh')[0].checked) {
+						// Unchecked in the meantime
+						return;
+					}
+					updateCDNMsg(true);
+				}, 5000);
+			}
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log(textStatus + ": " + errorThrown);	// FIXME
+            $('#update-cdnserver').click(updateCDNServer);
+            $('#update-cdnapi').click(updateCDNApi);
+            $('#update-cdnmsg').removeClass('fa-spin').click(updateCDNMsg);
+			if(!prompting && !alerted) {
+				alerted = true;
+				bootbox.alert("Couldn't contact the backend: is Server down, or is the Admin/Monitor interface disabled?", function() {
+					promptAccessDetails();
+					alerted = false;
+				});
+			}
+		},
+
+		dataType: "text" // parsererror: SyntaxError: Unexpected token N in JSON at position 0
+	});
+}
+
+function rawCDNMsg(data) {
+	if(currentCDNApi == "show_state") {
+        $('#cdnmsg-info').html('<pre>' + data + '</pre>');
+    } else {
+        $('#cdnmsg-info').html('<pre>' + JSON.stringify(JSON.parse(data), null, 4) + '</pre>');
+    }
+}
+//---------------------------------------------------------------------------------------------------------------
+
+function dumpBackup() {
+	$.ajax({
+		type: 'GET',
+		url: server + "/admin/dumps",
+		cache: false,
+		contentType: "application/json",
+		success: function(json) {
+			console.log("Got dump info:");
+			console.log(json);
+            $('#dumpinfo').html(json['dumpLog']);
+		},
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            console.log(textStatus + ": " + errorThrown);   // FIXME
+            if(!prompting && !alerted) {
+                alerted = true;
+                bootbox.alert("Couldn't contact the backend: is Server down, or is the Admin/Monitor interface disabled?", function() {
+                    promptAccessDetails();
+                    alerted = false;
+                });
+            }
+        },
+        dataType: "json"
+    });
+}
+
+function loadBackup() {
+	$.ajax({
+		type: 'GET',
+		url: server + "/admin/loads",
+		cache: false,
+		contentType: "application/json",
+		success: function(json) {
+			console.log("Got load info:");
+			console.log(json);
+            $('#loadinfo').html(json['loadLog']);
+		},
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            console.log(textStatus + ": " + errorThrown);   // FIXME
+            if(!prompting && !alerted) {
+                alerted = true;
+                bootbox.alert("Couldn't contact the backend: is Server down, or is the Admin/Monitor interface disabled?", function() {
+                    promptAccessDetails();
+                    alerted = false;
+                });
+            }
+        },
+        dataType: "json"
+    });
+}
+
+function initBackup() {
+	$.ajax({
+		type: 'GET',
+		url: server + "/admin/init",
+		cache: false,
+		contentType: "application/json",
+		success: function(json) {
+			console.log("Got init info:");
+			console.log(json);
+            $('#initinfo').html(json['status']);
+		},
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            console.log(textStatus + ": " + errorThrown);   // FIXME
+            if(!prompting && !alerted) {
+                alerted = true;
+                bootbox.alert("Couldn't contact the backend: is Server down, or is the Admin/Monitor interface disabled?", function() {
+                    promptAccessDetails();
+                    alerted = false;
+                });
+            }
+        },
+        dataType: "json"
+    });
 }
 
 // Server info

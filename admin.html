@@ -33,6 +33,7 @@
 				<ul id="admintabs" class="nav nav-tabs" role="tablist">
 					<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
 					<li role="presentation" class="disabled"><a href="#servers" aria-controls="servers" role="tab" data-toggle="tab">Servers</a></li>
+					<li role="presentation" class="disabled"><a href="#cdn" aria-controls="cdn" role="tab" data-toggle="tab">CDN</a></li>
 					<li role="presentation" class="disabled"><a href="#serverinfo" aria-controls="serverinfo" role="tab" data-toggle="tab">Server Info</a></li>
 					<li role="presentation" class="disabled"><a href="#channelsinfo" aria-controls="channelsinfo" role="tab" data-toggle="tab">Channels</a></li>
 					<li role="presentation" class="disabled"><a href="#messagesinfo" aria-controls="messagesinfo" role="tab" data-toggle="tab">Messages</a></li>
@@ -69,6 +70,28 @@
                                 </label>
                             </div>
                             <div id="servermsg-info">
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="cdn">
+                        <div id="cdnserver" class="col-md-2">
+                            <h4>Server (<span id="cdnserver-num">0</span>)</h4>
+                            <div id="cdnserver-list" class="list-group">
+                            </div>
+                        </div>
+                        <div id="cdnapi" class="col-md-2">
+                            <h4>Api (<span id="cdnapi-num"></span>)</h4>
+                            <div id="cdnapi-list" class="list-group">
+                            </div>
+                        </div>
+                        <div id="cdnmsg" class="col-md-8">
+                            <h4>Message <i id="update-cdnmsg" class="fa fa-refresh" title="Refresh message" style="cursor: pointer;"></i></h4>
+                            <div id="cdnmsg-options" class="hide">
+                                <label class="checkbox-inline" title="Autorefresh this info every 5s">
+                                    <input id="cdnmsg-autorefresh" type="checkbox" value="" title="Autorefresh this info every 5s">Autorefresh
+                                </label>
+                            </div>
+                            <div id="cdnmsg-info">
                             </div>
                         </div>
                     </div>
