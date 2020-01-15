@@ -248,10 +248,7 @@ function updateServerMsg(refresh) {
 		success: function(json) {
 			console.log("Got server message:");
 			console.log(json);
-			//channelInfo = json["info"];
-            // Just use <pre> and show the channel info as it is
-            $('#servermsg-info').html('<pre>' + json + '</pre>');
-            //$('#servermsg-info').html('<pre>' + JSON.stringify(json, null, 4) + '</pre>');
+            rawServerMsg(json);
 			setTimeout(function() {
 				$('#update-server').click(updateServer);
 				$('#update-serverapi').click(updateServerApi);
@@ -291,7 +288,23 @@ function updateServerMsg(refresh) {
 	});
 }
 
-function rawServerMsg() {
+function rawServerMsg(data) {
+	if(currentServerApi == "info") {
+        var xmlDoc = (new DOMParser()).parseFromString(data, "text/xml")
+        var xmlStr = "";
+        var fn = xmlDoc.getElementsByTagName("wcs_server_info")[0].firstChild;
+        for(idx = 0; idx < xmlDoc.getElementsByTagName("wcs_server_info")[0].childNodes.length; idx++) {
+            xmlStr = xmlStr + "# " + fn.nodeName + "\n";
+            xmlStr = xmlStr + fn.innerHTML.replace("<![CDATA[", "").replace("]]>", "") + "\n";
+            fn = fn.nextSibling;
+            xmlStr = xmlStr + "\n";
+        }
+        $('#servermsg-info').html('<pre>' + xmlStr + '</pre>');
+    } else {
+        // Just use <pre> and show the channel info as it is
+        $('#servermsg-info').html('<pre>' + data + '</pre>');
+        //$('#servermsg-info').html('<pre>' + JSON.stringify(json, null, 4) + '</pre>');
+    }
 }
 
 // Server info
