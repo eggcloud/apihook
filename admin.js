@@ -28,10 +28,12 @@ var serverApiArray = [
 var cdnApiArray = [
     "show_nodes",
     "show_state",
-    "show_routes",
+    //"show_routes",
+    "profile__print",
 ];
 var currentServer = null;
 var currentServerApi = null;
+var currentCDNServer = null;
 var currentCDNApi = null;
 
 $(document).ready(function() {
@@ -73,6 +75,16 @@ function initialize() {
     $("#cdnmsg-autorefresh").change(function() {
         if(this.checked) {
             updateCDNMsg(true);
+        }
+    });
+
+    $('#connmsg').hide();
+    $('#update-connserver').click(updateConnServer);
+    $('#update-connmsg').click(updateConnMsg);
+    updateConnServer();
+    $("#connmsg-autorefresh").change(function() {
+        if(this.checked) {
+            updateConnMsg(true);
         }
     });
 }
@@ -267,13 +279,13 @@ function updateCDNServer() {
         $('#cdnserver-'+n).click(function() {
             var sh = $(this).text();
             //var sh = $(this).attr('id').substring(5);
-            if(currentServer === sh)
+            if(currentCDNServer === sh)
                 return;	// The self-refresh takes care of that
             console.log("Getting server " + sh);
             $('#cdnserver-list a').removeClass('active');
             $('#cdnserver-'+sh).addClass('active');
             currentCDNApi = null;
-            currentServer = sh;
+            currentCDNServer = sh;
             $('#cdnapi-list').empty();
             $('#cdnapi').show();
             $('#cdnmsg-info').empty();
@@ -282,13 +294,13 @@ function updateCDNServer() {
             updateCDNApi();
         });
     }
-    if(currentServer !== null && currentServer !== undefined) {
-        if($('#cdnserver-'+currentServer).length) {
-            $('#cdnserver-'+currentServer).addClass('active');
+    if(currentCDNServer !== null && currentCDNServer !== undefined) {
+        if($('#cdnserver-'+currentCDNServer).length) {
+            $('#cdnserver-'+currentCDNServer).addClass('active');
         } else {
             // The server that was selected has disappeared
             currentCDNApi = null;
-            currentServer = null;
+            currentCDNServer = null;
             $('#cdnapi-list').empty();
             $('#cdnapi').hide();
             $('#cdnmsg-info').empty();
@@ -299,7 +311,7 @@ function updateCDNServer() {
 }
 
 function updateCDNApi() {
-	if(currentServer === null || currentServer === undefined)
+	if(currentCDNServer === null || currentCDNServer === undefined)
 		return;
 
 	$('#update-cdnserver').unbind('click');
@@ -334,7 +346,7 @@ function updateCDNApi() {
             $('#cdnapi-'+currentCDNApi).addClass('active');
         } else {
             // The server api that was selected has disappeared
-            currentServer = null;
+            currentCDNServer = null;
             $('#cdnmsg-info').empty();
             $('#cdnmsg-options').hide();
             $('#cdnmsg').hide();
@@ -356,8 +368,8 @@ function updateCDNMsg(refresh) {
 
 	$.ajax({
 		type: 'GET',
-		url: "https://" + currentServer + ".remoteseminar.com:8444/rest-api/cdn/" + currentCDNApi,
-		//url: "http://" + currentServer + ".remoteseminar.com:8081/rest-api/cdn/" + currentServerApi,
+		url: "https://" + currentCDNServer + ".remoteseminar.com:8444/rest-api/cdn/" + currentCDNApi.replace("__","/"),
+		//url: "http://" + currentCDNServer + ".remoteseminar.com:8081/rest-api/cdn/" + currentCDNApi,
 		cache: false,
 		contentType: "application/json",
 		success: function(text) {
