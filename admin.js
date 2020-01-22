@@ -78,6 +78,7 @@ function initialize() {
         }
     });
 
+    /*
     $('#connmsg').hide();
     $('#update-connserver').click(updateConnServer);
     $('#update-connmsg').click(updateConnMsg);
@@ -87,6 +88,7 @@ function initialize() {
             updateConnMsg(true);
         }
     });
+    */
 }
 
 function updateServer() {
