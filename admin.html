@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Web Call Server: Admin/Monitor</title>
+<title>WCS Monitoring</title>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js" ></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.1.0/bootbox.min.js"></script>
@@ -33,12 +33,9 @@
 				<ul id="admintabs" class="nav nav-tabs" role="tablist">
 					<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
 					<li role="presentation" class="disabled"><a href="#cdn" aria-controls="cdn" role="tab" data-toggle="tab">CDN</a></li>
-                    <!--
 					<li role="presentation" class="disabled"><a href="#routes" aria-controls="routes" role="tab" data-toggle="tab">Routes</a></li>
 					<li role="presentation" class="disabled"><a href="#streams" aria-controls="streams" role="tab" data-toggle="tab">Streams</a></li>
-					<li role="presentation" class="disabled"><a href="#connections" aria-controls="connections" role="tab" data-toggle="tab">Connections</a></li>
-					<li role="presentation" class="disabled"><a href="#transcoder" aria-controls="transcoder" role="tab" data-toggle="tab">Transcoding</a></li>
-					<li role="presentation" class="disabled"><a href="#recorder" aria-controls="recorder" role="tab" data-toggle="tab">Recording</a></li>
+                    <!--
 					<li role="presentation" class="disabled"><a href="#servers" aria-controls="servers" role="tab" data-toggle="tab">Servers</a></li>
                     -->
 
@@ -83,20 +80,47 @@
                             </div>
                         </div>
                     </div>
-                    <div role="tabpanel" class="tab-pane fade" id="connections">
-                        <div id="connserver" class="col-md-2">
-                            <h4>Server (<span id="connserver-num">0</span>)</h4>
-                            <div id="connserver-list" class="list-group">
+                    <div role="tabpanel" class="tab-pane fade" id="routes">
+                        <div id="routeserver" class="col-md-2">
+                            <h4>Server (<span id="routeserver-num">0</span>)</h4>
+                            <div id="routeserver-list" class="list-group">
                             </div>
                         </div>
-                        <div id="connmsg" class="col-md-10">
-                            <h4>Message <i id="update-connmsg" class="fa fa-refresh" title="Refresh message" style="cursor: pointer;"></i></h4>
-                            <div id="connmsg-options" class="hide">
+                        <div id="routeapi" class="col-md-2">
+                            <h4>StreamName (<span id="routeapi-num"></span>)</h4>
+                            <div id="routeapi-list" class="list-group">
+                            </div>
+                        </div>
+                        <div id="routemsg" class="col-md-8">
+                            <h4>Message (<span id="routemsg-num">0</span>)<i id="update-routemsg" class="fa fa-refresh" title="Refresh message" style="cursor: pointer;"></i></h4>
+                            <div id="routemsg-options" class="hide">
                                 <label class="checkbox-inline" title="Autorefresh this info every 5s">
-                                    <input id="connmsg-autorefresh" type="checkbox" value="" title="Autorefresh this info every 5s">Autorefresh
+                                    <input id="routemsg-autorefresh" type="checkbox" value="" title="Autorefresh this info every 5s">Autorefresh
                                 </label>
                             </div>
-                            <div id="connmsg-info">
+                            <div id="routemsg-info">
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="streams">
+                        <div id="streamserver" class="col-md-2">
+                            <h4>Server (<span id="streamserver-num">0</span>)</h4>
+                            <div id="streamserver-list" class="list-group">
+                            </div>
+                        </div>
+                        <div id="streamapi" class="col-md-2">
+                            <h4>Session (<span id="streamapi-num"></span>)</h4>
+                            <div id="streamapi-list" class="list-group">
+                            </div>
+                        </div>
+                        <div id="streammsg" class="col-md-8">
+                            <h4>Message (<span id="streammsg-num">0</span>)<i id="update-streammsg" class="fa fa-refresh" title="Refresh message" style="cursor: pointer;"></i></h4>
+                            <div id="streammsg-options" class="hide">
+                                <label class="checkbox-inline" title="Autorefresh this info every 5s">
+                                    <input id="streammsg-autorefresh" type="checkbox" value="" title="Autorefresh this info every 5s">Autorefresh
+                                </label>
+                            </div>
+                            <div id="streammsg-info">
                             </div>
                         </div>
                     </div>
@@ -122,6 +146,8 @@
                             </div>
                         </div>
                     </div>
+
+
 					<div role="tabpanel" class="tab-pane fade" id="channelsinfo">
 						<div id="users" class="col-md-2">
 							<h4>Users (<span id="users-num">0</span>) <i id="update-users" class="fa fa-refresh" title="Refresh list of users" style="cursor: pointer;"></i></h4>

@@ -26,10 +26,14 @@ var serverApiArray = [
     "info",
 ];
 var cdnApiArray = [
-    "show_nodes",
-    "show_state",
-    //"show_routes",
-    "profile__print",
+    "cdn__show_nodes",
+    "cdn__show_state",
+    "cdn__show_routes",
+    "cdn__profile__print",
+    "stream__find_all",
+    "connection__find_all",
+    "recorder__find_all",
+    "transcoder__find_all",
 ];
 var currentServer = null;
 var currentServerApi = null;
@@ -78,17 +82,43 @@ function initialize() {
         }
     });
 
-    /*
-    $('#connmsg').hide();
-    $('#update-connserver').click(updateConnServer);
-    $('#update-connmsg').click(updateConnMsg);
-    updateConnServer();
-    $("#connmsg-autorefresh").change(function() {
+    $('#routeapi').hide();
+    $('#routemsg').hide();
+    $('#update-routeserver').click(updateRouteServer);
+    $('#update-routeapi').click(updateRouteApi);
+    $('#update-routemsg').click(updateRouteMsg);
+    updateRouteServer();
+    $("#routemsg-autorefresh").change(function() {
         if(this.checked) {
-            updateConnMsg(true);
+            updateRouteMsg(true);
         }
     });
-    */
+
+    $('#streamapi').hide();
+    $('#streammsg').hide();
+    $('#update-streamserver').click(updateStreamServer);
+    $('#update-streamapi').click(updateStreamApi);
+    $('#update-streammsg').click(updateStreamMsg);
+    updateStreamServer();
+    $("#streammsg-autorefresh").change(function() {
+        if(this.checked) {
+            updateStreamMsg(true);
+        }
+    });
+}
+
+function updateRouteServer() {
+}
+function updateRouteApi() {
+}
+function updateRouteMsg(refresh) {
+}
+
+function updateStreamServer() {
+}
+function updateStreamApi() {
+}
+function updateStreamMsg(refresh) {
 }
 
 function updateServer() {
@@ -370,8 +400,8 @@ function updateCDNMsg(refresh) {
 
 	$.ajax({
 		type: 'GET',
-		url: "https://" + currentCDNServer + ".remoteseminar.com:8444/rest-api/cdn/" + currentCDNApi.replace("__","/"),
-		//url: "http://" + currentCDNServer + ".remoteseminar.com:8081/rest-api/cdn/" + currentCDNApi,
+		url: "https://" + currentCDNServer + ".remoteseminar.com:8444/rest-api/" + currentCDNApi.replace(/__/gi,"/"),
+		//url: "http://" + currentCDNServer + ".remoteseminar.com:8081/rest-api/" + currentCDNApi,
 		cache: false,
 		contentType: "application/json",
 		success: function(text) {
@@ -405,7 +435,7 @@ function updateCDNMsg(refresh) {
             $('#update-cdnserver').click(updateCDNServer);
             $('#update-cdnapi').click(updateCDNApi);
             $('#update-cdnmsg').removeClass('fa-spin').click(updateCDNMsg);
-			if(!prompting && !alerted) {
+			if(!prompting && !alerted && currentCDNApi !== "cdn__show_routes" && currentCDNApi.indexOf("find_all") == -1 ) {
 				alerted = true;
 				bootbox.alert("Couldn't contact the backend: is Server down, or is the Admin/Monitor interface disabled?", function() {
 					promptAccessDetails();
@@ -419,12 +449,15 @@ function updateCDNMsg(refresh) {
 }
 
 function rawCDNMsg(data) {
-	if(currentCDNApi == "show_state") {
+	if(currentCDNApi === "cdn__show_state") {
         $('#cdnmsg-info').html('<pre>' + data + '</pre>');
+    } else if(currentCDNApi.indexOf("find_all") != -1 ) {
+        $('#cdnmsg-info').html('<pre>' + JSON.parse(data).length + '<br>' + JSON.stringify(JSON.parse(data), null, 4) + '</pre>');
     } else {
         $('#cdnmsg-info').html('<pre>' + JSON.stringify(JSON.parse(data), null, 4) + '</pre>');
     }
 }
+
 //---------------------------------------------------------------------------------------------------------------
 
 function dumpBackup() {
