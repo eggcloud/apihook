@@ -14,7 +14,7 @@ http.createServer((req, res) => {
 
     if (req.method === 'GET') {
         if (req.url === '/') {
-            return fs.readFile('./index.html', (err, data) => {
+            return fs.readFile('./admin.html', (err, data) => {
                 if (err) { throw err; }
                 res.end(data);
             });
