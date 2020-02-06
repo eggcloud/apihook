@@ -20,6 +20,7 @@ var serverArray = [
 var serverApiArray = [
     "stat",
     "info",
+    //"stat&groups=cdn_stats",
 ];
 var cdnApiArray = [
     "cdn__show_nodes",
