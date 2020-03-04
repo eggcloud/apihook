@@ -16,6 +16,9 @@ var serverArray = [
     "stfp3",
     "stfp4",
     "stfp5",
+    "stfp6",
+    "stfp7",
+    "stfp8",
 ];
 var serverApiArray = [
     "stat",
@@ -33,6 +36,7 @@ var cdnApiArray = [
     "pull__find_all",
     "recorder__find_all",
     "transcoder__find_all",
+    "vod__find_all",
     //"cdn__show_redundant_transcodings",
 ];
 var currentCDNServer = null;
