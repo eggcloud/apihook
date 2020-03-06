@@ -19,6 +19,9 @@ var serverArray = [
     "stfp6",
     "stfp7",
     "stfp8",
+    "fpjp1",
+    "fpjp2",
+    "fpjp3",
 ];
 var serverApiArray = [
     "stat",
